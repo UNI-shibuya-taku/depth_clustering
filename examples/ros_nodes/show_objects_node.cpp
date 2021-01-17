@@ -34,17 +34,29 @@
 #include "visualization/visualizer.h"
 
 #include "tclap/CmdLine.h"
-
+#include<stdio.h>
+#include<stdlib.h>
+#include <iostream>
+#include <fstream>
+#include "utils/timer.h"
 using std::string;
 
 using namespace depth_clustering;
 
 using ClustererT = ImageBasedClusterer<LinearImageLabeler<>>;
-
+void func(){
+  double depth_time = ros::Time::now().toSec();
+}
 int main(int argc, char* argv[]) {
+//  FILE *fp;
+//  fp = fopen("show_data.csv", "w");
+//  std::ofstream ofs_show;
+  time_utils::Timer timer_2;
   TCLAP::CmdLine cmd(
       "Subscribe to /velodyne_points topic and show clustering on the data.",
       ' ', "1.0");
+  // クラスタ分け閾値の設定ここ default is 10
+  // true -> 打ち込んで閾値設定
   TCLAP::ValueArg<int> angle_arg(
       "", "angle",
       "Threshold angle. Below this value, the objects are separated", false, 10,
@@ -82,18 +94,23 @@ int main(int argc, char* argv[]) {
 
   ros::init(argc, argv, "show_objects_node");
   ros::NodeHandle nh;
-
-  string topic_clouds = "/velodyne_points";
-
+    const double depth_time = ros::Time::now().toSec();
+  string topic_clouds = "/velodyne_points"; // ここでsubscribeするメッセージを変更できる
+ //  string topic_clouds = "/velodyne_obstacles";
+ // string topic_clouds = "/kitti/velo/pointcloud";
+ //  string topic_clouds = "/d_c_d_points"; // dynamic_cloud_detectorと組み合わせる時はこれ
+ // string topic_clouds = "/kitti/velo/pointcloud"; // ここでsubscribeするメッセージを変更できる
   CloudOdomRosSubscriber subscriber(&nh, *proj_params_ptr, topic_clouds);
   Visualizer visualizer;
-  visualizer.show();
+  visualizer.show(); // visualizerを表示させるかどうか
 
-  int min_cluster_size = 20;
-  int max_cluster_size = 100000;
+  int min_cluster_size = 30;
+  int max_cluster_size = 100000; // 初期設定100000
 
+//  int smooth_window_size = 7;
+  Radians ground_remove_angle = 7_deg; // 大きいとたくさん除去される
+ // Radians ground_remove_angle = -1_deg; // 大きいとたくさん除去される
   int smooth_window_size = 7;
-  Radians ground_remove_angle = 7_deg;
 
   auto depth_ground_remover = DepthGroundRemover(
       *proj_params_ptr, ground_remove_angle, smooth_window_size);
@@ -104,6 +121,7 @@ int main(int argc, char* argv[]) {
   subscriber.AddClient(&depth_ground_remover);
   depth_ground_remover.AddClient(&clusterer);
   clusterer.AddClient(visualizer.object_clouds_client());
+//  std::cout << "depth_show_time: " << ros::Time::now().toSec() - depth_time << std::endl;
   subscriber.AddClient(&visualizer);
 
   fprintf(stderr, "INFO: Running with angle tollerance: %f degrees\n",
@@ -115,7 +133,10 @@ int main(int argc, char* argv[]) {
 
   auto exit_code = application.exec();
 
+//  fclose(fp);
   // if we close application, still wait for ros to shutdown
+//  std::cout << "total detph time: " << ros::Time::now().toSec() - depth_time << std::endl;
   ros::waitForShutdown();
+
   return exit_code;
 }

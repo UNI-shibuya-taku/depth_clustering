@@ -1,23 +1,3 @@
-// Copyright (C) 2020  I. Bogoslavskyi, C. Stachniss
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the "Software"),
-// to deal in the Software without restriction, including without limitation
-// the rights to use, copy, modify, merge, publish, distribute, sublicense,
-// and/or sell copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
-
 #ifndef SRC_ROS_BRIDGE_CLOUD_ODOM_ROS_SUBSCRIBER_H_
 #define SRC_ROS_BRIDGE_CLOUD_ODOM_ROS_SUBSCRIBER_H_
 
@@ -58,6 +38,8 @@ class CloudOdomRosSubscriber : public AbstractSender<Cloud> {
     delete _sync;
   }
 
+ // ros::Publisher pub_color_cloud = node_handle.advertise<sensor_msgs::PointCloud2>("/segment_color_cloud", 1); // new
+
   /**
    * @brief      Get synchronized odometry and cloud
    *
@@ -86,6 +68,7 @@ class CloudOdomRosSubscriber : public AbstractSender<Cloud> {
   ros::NodeHandle* _node_handle;
 
   message_filters::Subscriber<PointCloudT>* _subscriber_clouds;
+  // ros::Subscriber _subscriber_clouds = node_handle.subscribe("~", 1, callback);
   message_filters::Subscriber<OdometryT>* _subscriber_odom;
   message_filters::Synchronizer<ApproximateTimePolicy>* _sync;
   std::string _topic_clouds;

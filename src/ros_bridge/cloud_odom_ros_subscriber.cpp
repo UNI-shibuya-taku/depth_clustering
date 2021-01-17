@@ -1,23 +1,3 @@
-// Copyright (C) 2020  I. Bogoslavskyi, C. Stachniss
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the "Software"),
-// to deal in the Software without restriction, including without limitation
-// the rights to use, copy, modify, merge, publish, distribute, sublicense,
-// and/or sell copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
-
 #include "ros_bridge/cloud_odom_ros_subscriber.h"
 #include <eigen_conversions/eigen_msg.h>
 
@@ -41,6 +21,7 @@ using std::vector;
 using std::string;
 using std::map;
 
+// check!!
 template <class T>
 T BytesTo(const vector<uint8_t>& data, uint32_t start_idx) {
   const size_t kNumberOfBytes = sizeof(T);
@@ -78,6 +59,7 @@ void PrintMsgStats(const sensor_msgs::PointCloud2ConstPtr& msg) {
   fprintf(stderr, "=========================================\n");
 }
 
+// check!!
 CloudOdomRosSubscriber::CloudOdomRosSubscriber(NodeHandle* node_handle,
                                                const ProjectionParams& params,
                                                const string& topic_clouds,
@@ -93,6 +75,7 @@ CloudOdomRosSubscriber::CloudOdomRosSubscriber(NodeHandle* node_handle,
   _sync = nullptr;
 }
 
+// check!!
 void CloudOdomRosSubscriber::StartListeningToRos() {
   if (!_topic_odom.empty()) {
     _subscriber_clouds = new Subscriber<PointCloud2>(
@@ -111,6 +94,7 @@ void CloudOdomRosSubscriber::StartListeningToRos() {
   }
 }
 
+// check
 void CloudOdomRosSubscriber::Callback(const PointCloud2::ConstPtr& msg_cloud,
                                       const Odometry::ConstPtr& msg_odom) {
   // PrintMsgStats(msg_cloud);
@@ -120,6 +104,7 @@ void CloudOdomRosSubscriber::Callback(const PointCloud2::ConstPtr& msg_cloud,
   ShareDataWithAllClients(*cloud_ptr);
 }
 
+// check
 void CloudOdomRosSubscriber::CallbackVelodyne(
     const PointCloud2::ConstPtr& msg_cloud) {
   // PrintMsgStats(msg_cloud);
@@ -128,6 +113,7 @@ void CloudOdomRosSubscriber::CallbackVelodyne(
   ShareDataWithAllClients(*cloud_ptr);
 }
 
+// check
 Pose CloudOdomRosSubscriber::RosOdomToPose(const Odometry::ConstPtr& msg) {
   Pose pose;
   // we want float, so some casting is needed
@@ -137,6 +123,7 @@ Pose CloudOdomRosSubscriber::RosOdomToPose(const Odometry::ConstPtr& msg) {
   return pose;
 }
 
+// check
 Cloud::Ptr CloudOdomRosSubscriber::RosCloudToCloud(
     const PointCloud2::ConstPtr& msg) {
   uint32_t x_offset = msg->fields[0].offset;
